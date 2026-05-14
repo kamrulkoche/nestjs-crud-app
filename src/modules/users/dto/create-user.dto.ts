@@ -10,19 +10,20 @@ import {
 } from 'class-validator';
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'Rahim' })
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
+  @IsString({ message: 'Name must be a string' })
+  @IsNotEmpty({ message: 'Name is required' })
   name: string;
 
-  @ApiProperty({ example: 'rahim@test.com' })
-  @IsEmail()
+  @ApiProperty()
+  @IsEmail({}, { message: 'Invalid email format' })
+  @IsNotEmpty({ message: 'Email is required' })
   email: string;
 
-  @ApiPropertyOptional({ example: 25, minimum: 0, maximum: 150 })
+  @ApiPropertyOptional({ minimum: 0, maximum: 150 })
   @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Max(150)
+  @IsInt({ message: 'Age must be an integer' })
+  @Min(0, { message: 'Age cannot be negative' })
+  @Max(150, { message: 'Age cannot be greater than 150' })
   age?: number;
 }

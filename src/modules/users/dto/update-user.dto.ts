@@ -10,21 +10,21 @@ import {
 } from 'class-validator';
 
 export class UpdateUserDto {
-  @ApiPropertyOptional({ example: 'Rahim' })
+  @ApiPropertyOptional()
   @IsOptional()
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'Name must be a string' })
+  @IsNotEmpty({ message: 'Name is required' })
   name?: string;
 
-  @ApiPropertyOptional({ example: 'rahim@test.com' })
+  @ApiPropertyOptional()
   @IsOptional()
-  @IsEmail()
+  @IsEmail({}, { message: 'Invalid email format' })
   email?: string;
 
-  @ApiPropertyOptional({ example: 25, minimum: 0, maximum: 150 })
+  @ApiPropertyOptional({ minimum: 0, maximum: 150 })
   @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Max(150)
+  @IsInt({ message: 'Age must be an integer' })
+  @Min(0, { message: 'Age cannot be negative' })
+  @Max(150, { message: 'Age cannot be greater than 150' })
   age?: number;
 }
