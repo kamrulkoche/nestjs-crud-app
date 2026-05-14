@@ -1,0 +1,77 @@
+### Users CRUD — VS Code REST Client diye chalao (proti request er upore "Send Request" click koro)
+### Server age chalu koro: npm run start:dev
+
+@baseUrl = http://localhost:3000
+
+### Create — notun user banao
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Rahim",
+  "email": "rahim@test.com",
+  "age": 25
+}
+
+### Create — arekjon user
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Karim",
+  "email": "karim@test.com",
+  "age": 30
+}
+
+### Read all — sob user
+GET {{baseUrl}}/users
+
+### Read one — id diye ekjon
+GET {{baseUrl}}/users/1
+
+### Update — id 1 er age update
+PATCH {{baseUrl}}/users/1
+Content-Type: application/json
+
+{
+  "age": 28
+}
+
+### Delete — id 1 muche dao
+DELETE {{baseUrl}}/users/1
+
+###############################################
+### Validation test — egulo error dewa uchit ###
+###############################################
+
+### Bhul email -> 400 Bad Request
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Test",
+  "email": "not-an-email"
+}
+
+### Ojana field (role) -> 400 (forbidNonWhitelisted)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Test",
+  "email": "test@test.com",
+  "role": "admin"
+}
+
+### Age range er baire -> 400
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Test",
+  "email": "test@test.com",
+  "age": 200
+}
+
+### Nei emon id -> 404 Not Found
+GET {{baseUrl}}/users/999
