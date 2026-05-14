@@ -20,7 +20,9 @@
       "PowerShell(wmic process *)",
       "PowerShell($env:PGPASSWORD=\"150064\"; & \"C:\\\\Program Files\\\\PostgreSQL\\\\17\\\\bin\\\\psql.exe\" -U postgres -h localhost -p 5432 -c \"CREATE DATABASE learn_nestjs;\")",
       "Bash(node -e ' *)",
-      "PowerShell($env:PGPASSWORD=\"150064\"; & \"C:\\\\Program Files\\\\PostgreSQL\\\\17\\\\bin\\\\psql.exe\" -U postgres -h localhost -p 5432 -l | Select-String \"learn_nestjs\")"
+      "PowerShell($env:PGPASSWORD=\"150064\"; & \"C:\\\\Program Files\\\\PostgreSQL\\\\17\\\\bin\\\\psql.exe\" -U postgres -h localhost -p 5432 -l | Select-String \"learn_nestjs\")",
+      "PowerShell(npm install *)",
+      "PowerShell(npm run *)"
     ]
   }
 }
