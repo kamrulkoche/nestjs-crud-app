@@ -5,8 +5,10 @@ import { AppController } from './modules/app.controller';
 import { AppService } from './services/app.service';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { StudentsModule } from './modules/students/students.module';
 import { User } from './entities/user.entity';
 import { Teacher } from './entities/teacher.entity';
+import { Student } from './entities/student.entity';
 
 @Module({
   imports: [
@@ -20,12 +22,13 @@ import { Teacher } from './entities/teacher.entity';
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
-        entities: [User, Teacher],
+        entities: [User, Teacher, Student],
         synchronize: true,
       }),
     }),
     UsersModule,
     AuthModule,
+    StudentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

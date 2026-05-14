@@ -4,13 +4,14 @@ import { JwtModule, JwtSignOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Teacher } from '../../entities/teacher.entity';
+import { Student } from '../../entities/student.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Teacher]),
+    TypeOrmModule.forFeature([Teacher, Student]),
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],

@@ -7,16 +7,22 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
+import { Student } from '../../entities/student.entity';
 import { Teacher } from '../../entities/teacher.entity';
 import { LoginTeacherDto } from './dto/login-teacher.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
-import { JwtPayload } from './strategies/jwt.strategy';
+import { LoginStudentDto } from './dto/login-student.dto';
+import { Role } from './role.enum';
+import { JwtPayload } from '../../interfaces/jwt-payload.interface';
+import { AuthAccount } from '../../interfaces/auth-account.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Teacher)
     private readonly teacherRepository: Repository<Teacher>,
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository<Student>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -36,36 +42,53 @@ export class AuthService {
     });
     await this.teacherRepository.save(teacher);
 
-    return this.buildAuthResponse(teacher);
+    return this.buildAuthResponse(teacher, Role.TEACHER);
   }
 
   async login(dto: LoginTeacherDto) {
     const teacher = await this.teacherRepository.findOne({
       where: { email: dto.email },
     });
-    if (!teacher) {
+    return this.verifyAndIssue(teacher, dto.password, Role.TEACHER);
+  }
+
+  async studentLogin(dto: LoginStudentDto) {
+    const student = await this.studentRepository.findOne({
+      where: { email: dto.email },
+    });
+    return this.verifyAndIssue(student, dto.password, Role.STUDENT);
+  }
+
+  private async verifyAndIssue(
+    account: AuthAccount | null,
+    password: string,
+    role: Role,
+  ) {
+    if (!account) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const passwordMatches = await bcrypt.compare(
-      dto.password,
-      teacher.password,
-    );
+    const passwordMatches = await bcrypt.compare(password, account.password);
     if (!passwordMatches) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    return this.buildAuthResponse(teacher);
+    return this.buildAuthResponse(account, role);
   }
 
-  private buildAuthResponse(teacher: Teacher) {
-    const payload: JwtPayload = { sub: teacher.id, email: teacher.email };
+  private buildAuthResponse(account: AuthAccount, role: Role) {
+    const payload: JwtPayload = {
+      sub: account.id,
+      email: account.email,
+      role,
+    };
     return {
       accessToken: this.jwtService.sign(payload),
-      teacher: {
-        id: teacher.id,
-        name: teacher.name,
-        email: teacher.email,
+      user: {
+        id: account.id,
+        name: account.name,
+        email: account.email,
+        role,
       },
     };
   }
