@@ -10,7 +10,17 @@
       "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('class-validator:', p.dependencies['class-validator']||'MISSING'\\); console.log\\('class-transformer:', p.dependencies['class-transformer']||'MISSING'\\)\")",
       "Bash(npm install *)",
       "Bash(npx tsc *)",
-      "Bash(node -e \"console.log\\(JSON.stringify\\(require\\('./package.json'\\).scripts,null,2\\)\\)\")"
+      "Bash(node -e \"console.log\\(JSON.stringify\\(require\\('./package.json'\\).scripts,null,2\\)\\)\")",
+      "Bash(cat .gitignore)",
+      "Bash(ls -la .env)",
+      "Bash(cat src/app.module.ts)",
+      "Bash(cat .env)",
+      "PowerShell(psql *)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell(wmic process *)",
+      "PowerShell($env:PGPASSWORD=\"150064\"; & \"C:\\\\Program Files\\\\PostgreSQL\\\\17\\\\bin\\\\psql.exe\" -U postgres -h localhost -p 5432 -c \"CREATE DATABASE learn_nestjs;\")",
+      "Bash(node -e ' *)",
+      "PowerShell($env:PGPASSWORD=\"150064\"; & \"C:\\\\Program Files\\\\PostgreSQL\\\\17\\\\bin\\\\psql.exe\" -U postgres -h localhost -p 5432 -l | Select-String \"learn_nestjs\")"
     ]
   }
 }
