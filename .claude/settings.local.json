@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(Select-Object -Last 5)",
+      "Bash(mkdir common *)",
+      "Bash(touch __TRACKED_VAR__/.gitkeep)",
+      "Bash(mv app.controller.ts app.controller.spec.ts modules/)",
+      "Bash(mv app.service.ts services/)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('class-validator:', p.dependencies['class-validator']||'MISSING'\\); console.log\\('class-transformer:', p.dependencies['class-transformer']||'MISSING'\\)\")",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}
