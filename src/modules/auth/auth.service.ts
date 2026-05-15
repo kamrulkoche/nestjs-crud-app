@@ -1,17 +1,22 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
+import { Admin } from '../../entities/admin.entity';
 import { Student } from '../../entities/student.entity';
 import { Teacher } from '../../entities/teacher.entity';
+import { LoginAdminDto } from './dto/login-admin.dto';
 import { LoginTeacherDto } from './dto/login-teacher.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
 import { LoginStudentDto } from './dto/login-student.dto';
+import { RegisterAdminDto } from './dto/register-admin.dto';
 import { Role } from './role.enum';
 import { JwtPayload } from '../../interfaces/jwt-payload.interface';
 import { AuthAccount } from '../../interfaces/auth-account.interface';
@@ -23,7 +28,10 @@ export class AuthService {
     private readonly teacherRepository: Repository<Teacher>,
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
+    @InjectRepository(Admin)
+    private readonly adminRepository: Repository<Admin>,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async register(dto: RegisterTeacherDto) {
@@ -57,6 +65,42 @@ export class AuthService {
       where: { email: dto.email },
     });
     return this.verifyAndIssue(student, dto.password, Role.STUDENT);
+  }
+
+  async adminLogin(dto: LoginAdminDto) {
+    const admin = await this.adminRepository.findOne({
+      where: { email: dto.email },
+    });
+    return this.verifyAndIssue(admin, dto.password, Role.ADMIN);
+  }
+
+  async registerAdmin(dto: RegisterAdminDto) {
+    const expected = this.configService.get<string>('ADMIN_SETUP_TOKEN');
+    if (!expected) {
+      throw new BadRequestException(
+        'Admin registration is disabled (ADMIN_SETUP_TOKEN not configured)',
+      );
+    }
+    if (dto.setupToken !== expected) {
+      throw new UnauthorizedException('Invalid setup token');
+    }
+
+    const existing = await this.adminRepository.findOne({
+      where: { email: dto.email },
+    });
+    if (existing) {
+      throw new ConflictException('An admin with this email already exists');
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+    const admin = this.adminRepository.create({
+      name: dto.name,
+      email: dto.email,
+      password: passwordHash,
+    });
+    await this.adminRepository.save(admin);
+
+    return this.buildAuthResponse(admin, Role.ADMIN);
   }
 
   private async verifyAndIssue(

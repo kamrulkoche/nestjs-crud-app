@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -19,12 +20,12 @@ import { StudentsService } from './students.service';
 @ApiTags('students')
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.TEACHER)
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
   @Post()
+  @Roles(Role.TEACHER)
   create(
     @Body() dto: CreateStudentDto,
     @Request() req: { user: { id: number } },
@@ -33,12 +34,26 @@ export class StudentsController {
   }
 
   @Get()
+  @Roles(Role.TEACHER)
   findAll() {
     return this.studentsService.findAll();
   }
 
+  @Get('admin/all')
+  @Roles(Role.ADMIN)
+  findAllForAdmin() {
+    return this.studentsService.findAll();
+  }
+
   @Get(':id')
+  @Roles(Role.TEACHER, Role.ADMIN)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.studentsService.findOne(id);
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.studentsService.remove(id);
   }
 }

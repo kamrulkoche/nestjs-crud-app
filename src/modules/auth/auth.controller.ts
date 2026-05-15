@@ -10,9 +10,11 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { LoginAdminDto } from './dto/login-admin.dto';
 import { LoginTeacherDto } from './dto/login-teacher.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
 import { LoginStudentDto } from './dto/login-student.dto';
+import { RegisterAdminDto } from './dto/register-admin.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Role } from './role.enum';
 
@@ -36,6 +38,17 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   loginStudent(@Body() dto: LoginStudentDto) {
     return this.authService.studentLogin(dto);
+  }
+
+  @Post('admin/register')
+  registerAdmin(@Body() dto: RegisterAdminDto) {
+    return this.authService.registerAdmin(dto);
+  }
+
+  @Post('admin/login')
+  @HttpCode(HttpStatus.OK)
+  loginAdmin(@Body() dto: LoginAdminDto) {
+    return this.authService.adminLogin(dto);
   }
 
   @Get('me')

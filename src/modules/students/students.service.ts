@@ -44,6 +44,14 @@ export class StudentsService {
     return this.toResponse(student);
   }
 
+  async remove(id: number) {
+    const result = await this.studentRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Student with id ${id} not found`);
+    }
+    return { deleted: true };
+  }
+
   private toResponse(student: Student) {
     return {
       id: student.id,
